@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -239,11 +240,11 @@
             transition: transform 0.18s ease;
         }
 
-        .checkout-radio input[type="radio"]:checked + .checkout-radio__fake {
+        .checkout-radio input[type="radio"]:checked+.checkout-radio__fake {
             border-color: var(--green);
         }
 
-        .checkout-radio input[type="radio"]:checked + .checkout-radio__fake::after {
+        .checkout-radio input[type="radio"]:checked+.checkout-radio__fake::after {
             transform: scale(1);
         }
 
@@ -510,253 +511,239 @@
         }
     </style>
 </head>
+
 <body>
-<header>
-    <div class="header-container">
-        <a href="{% url 'products:catalog' %}" class="header__logo">
-            <img src="{% static 'img/logo.svg' %}" alt="Hop & Barley Logo">
-            <p class="logo-text">Hop & Barley</p>
-        </a>
-        <nav class="header__nav">
-            <ul>
-                <li><a href="{% url 'products:catalog' %}">Products</a></li>
-                <li><a href="#">Guides & Recipes</a></li>
-                <li><a href="#">Community</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-
-        <div class="header__auth-buttons" id="auth-guest">
-            <a href="#" class="button button--secondary">Sign in</a>
-            <a href="#" class="button button--primary">Register</a>
-        </div>
-
-        <div class="header__user-actions" id="auth-user">
-            <a href="#" class="user-icon" aria-label="My Account">
-                <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
+    <header>
+        <div class="header-container">
+            <a href="{% url 'products:catalog' %}" class="header__logo">
+                <img src="{% static 'img/logo.svg' %}" alt="Hop & Barley Logo">
+                <p class="logo-text">Hop & Barley</p>
             </a>
-            <a href="{% url 'cart' %}" class="cart-icon" aria-label="Shopping Cart">
-                <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="Shopping Cart">
-            </a>
-        </div>
-    </div>
-</header>
+            <nav class="header__nav">
+                <ul>
+                    <li><a href="{% url 'products:catalog' %}">Products</a></li>
+                    <li><a href="#">Guides & Recipes</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Resources</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
 
-{% if messages %}
-<div class="checkout-messages">
-    {% for message in messages %}
-    <div class="checkout-message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<main class="checkout-shell">
-    <div class="checkout-stage">
-        <section class="checkout-hero">
-            <div>
-                <p class="checkout-hero__eyebrow">Оформление</p>
-                <h1 class="checkout-hero__title">Checkout</h1>
+            <div class="header__auth-buttons" id="auth-guest">
+                <a href="#" class="button button--secondary">Sign in</a>
+                <a href="#" class="button button--primary">Register</a>
             </div>
-            <p class="checkout-hero__text">
-                Заказ оформляется от имени пользователя <strong>{{ request.user.username }}</strong>. Проверьте контактные данные и подтвердите удобный способ оплаты.
-            </p>
-        </section>
 
-        {% if cart|length > 0 %}
-        <section class="checkout-grid">
-            <form method="post" action="{% url 'checkout' %}" class="checkout-form">
-                {% csrf_token %}
+            <div class="header__user-actions" id="auth-user">
+                <a href="#" class="user-icon" aria-label="My Account">
+                    <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
+                </a>
+                <a href="{% url 'cart' %}" class="cart-icon" aria-label="Shopping Cart">
+                    <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="Shopping Cart">
+                </a>
+            </div>
+        </div>
+    </header>
 
-                {% if form.non_field_errors %}
-                <div class="checkout-errors">
-                    {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
-                    {% endfor %}
+    {% if messages %}
+    <div class="checkout-messages">
+        {% for message in messages %}
+        <div class="checkout-message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="checkout-shell">
+        <div class="checkout-stage">
+            <section class="checkout-hero">
+                <div>
+                    <p class="checkout-hero__eyebrow">Оформление</p>
+                    <h1 class="checkout-hero__title">Checkout</h1>
                 </div>
-                {% endif %}
+                <p class="checkout-hero__text">
+                    Заказ оформляется от имени пользователя <strong>{{ request.user.username }}</strong>. Проверьте
+                    контактные данные и подтвердите удобный способ оплаты.
+                </p>
+            </section>
 
-                <section class="checkout-card">
-                    <div class="checkout-card__head">
-                        <span class="checkout-card__eyebrow">Шаг 1</span>
-                        <h2 class="checkout-card__title">Контактные данные</h2>
-                        <p class="checkout-card__text">Эти поля используются для создания заказа и адреса доставки. Значения сохраняются из формы, если сервер вернет ошибки валидации.</p>
+            {% if cart|length > 0 %}
+            <section class="checkout-grid">
+                <form method="post" action="{% url 'checkout' %}" class="checkout-form">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="checkout-errors">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
                     </div>
+                    {% endif %}
 
-                    <div class="checkout-fields">
-                        <div class="checkout-field">
-                            <label for="id_full_name">{{ form.full_name.label }}</label>
-                            <input
-                                type="text"
-                                name="full_name"
-                                id="id_full_name"
-                                class="Input"
-                                placeholder="Иван Иванов"
-                                value="{{ form.full_name.value|default:'' }}"
-                                required
-                            >
-                            {% for error in form.full_name.errors %}
-                            <p class="checkout-field__error">{{ error }}</p>
-                            {% endfor %}
+                    <section class="checkout-card">
+                        <div class="checkout-card__head">
+                            <span class="checkout-card__eyebrow">Шаг 1</span>
+                            <h2 class="checkout-card__title">Контактные данные</h2>
+                            <p class="checkout-card__text">Эти поля используются для создания заказа и адреса доставки.
+                                Значения сохраняются из формы, если сервер вернет ошибки валидации.</p>
                         </div>
 
-                        <div class="checkout-field">
-                            <label for="id_phone">{{ form.phone.label }}</label>
-                            <input
-                                type="text"
-                                name="phone"
-                                id="id_phone"
-                                class="Input"
-                                placeholder="+7 999 000-00-00"
-                                value="{{ form.phone.value|default:'' }}"
-                                required
-                            >
-                            {% for error in form.phone.errors %}
-                            <p class="checkout-field__error">{{ error }}</p>
-                            {% endfor %}
+                        <div class="checkout-fields">
+                            <div class="checkout-field">
+                                <label for="id_full_name">{{ form.full_name.label }}</label>
+                                <input type="text" name="full_name" id="id_full_name" class="Input"
+                                    value="{{ form.full_name.value|default:'' }}" required>
+                                {% for error in form.full_name.errors %}
+                                <p class="checkout-field__error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                            <div class="checkout-field">
+                                <label for="id_phone">{{ form.phone.label }}</label>
+                                <input type="text" name="phone" id="id_phone" class="Input"
+                                    value="{{ form.phone.value|default:'' }}" required>
+                                {% for error in form.phone.errors %}
+                                <p class="checkout-field__error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                            <div class="checkout-field">
+                                <label for="id_city">{{ form.city.label }}</label>
+                                <input type="text" name="city" id="id_city" class="Input"
+                                    value="{{ form.city.value|default:'' }}" required>
+                                {% for error in form.city.errors %}
+                                <p class="checkout-field__error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                            <div class="checkout-field checkout-field--full">
+                                <label for="id_address">{{ form.address.label }}</label>
+                                <textarea name="address" id="id_address" class="Textarea" rows="4"
+                                    placeholder="Улица, дом, квартира, комментарий для доставки"
+                                    required>{{ form.address.value|default:'' }}</textarea>
+                                {% for error in form.address.errors %}
+                                <p class="checkout-field__error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-card">
+                        <div class="checkout-card__head">
+                            <span class="checkout-card__eyebrow">Шаг 2</span>
+                            <h2 class="checkout-card__title">Способ оплаты</h2>
+                            <p class="checkout-card__text">Форма использует ваши реальные варианты из `CheckoutForm`, а
+                                выбранное значение сохраняется при повторном рендере.</p>
                         </div>
 
-                        <div class="checkout-field">
-                            <label for="id_city">{{ form.city.label }}</label>
-                            <input
-                                type="text"
-                                name="city"
-                                id="id_city"
-                                class="Input"
-                                placeholder="Москва"
-                                value="{{ form.city.value|default:'' }}"
-                                required
-                            >
-                            {% for error in form.city.errors %}
-                            <p class="checkout-field__error">{{ error }}</p>
-                            {% endfor %}
-                        </div>
-
-                        <div class="checkout-field checkout-field--full">
-                            <label for="id_address">{{ form.address.label }}</label>
-                            <textarea
-                                name="address"
-                                id="id_address"
-                                class="Textarea"
-                                rows="4"
-                                placeholder="Улица, дом, квартира, комментарий для доставки"
-                                required
-                            >{{ form.address.value|default:'' }}</textarea>
-                            {% for error in form.address.errors %}
-                            <p class="checkout-field__error">{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </section>
-
-                <section class="checkout-card">
-                    <div class="checkout-card__head">
-                        <span class="checkout-card__eyebrow">Шаг 2</span>
-                        <h2 class="checkout-card__title">Способ оплаты</h2>
-                        <p class="checkout-card__text">Форма использует ваши реальные варианты из `CheckoutForm`, а выбранное значение сохраняется при повторном рендере.</p>
-                    </div>
-
-                    <div class="checkout-payment">
-                        {% for radio in form.payment_method %}
-                        <label for="{{ radio.id_for_label }}" class="checkout-radio">
-                            {{ radio.tag }}
-                            <span class="checkout-radio__fake"></span>
-                            <span class="checkout-radio__body">
-                                <span class="checkout-radio__title">{{ radio.choice_label }}</span>
-                                <span class="checkout-radio__text">
-                                    {% if forloop.first %}
-                                    Быстрое подтверждение и онлайн-оплата сразу после создания заказа.
-                                    {% elif forloop.counter == 2 %}
-                                    Удобный вариант для цифровых кошельков и быстрой повторной оплаты.
-                                    {% else %}
-                                    Оплата при получении заказа после подтверждения менеджером.
-                                    {% endif %}
+                        <div class="checkout-payment">
+                            {% for radio in form.payment_method %}
+                            <label for="{{ radio.id_for_label }}" class="checkout-radio">
+                                {{ radio.tag }}
+                                <span class="checkout-radio__fake"></span>
+                                <span class="checkout-radio__body">
+                                    <span class="checkout-radio__title">{{ radio.choice_label }}</span>
+                                    <span class="checkout-radio__text">
+                                        {% if forloop.first %}
+                                        Быстрое подтверждение и онлайн-оплата сразу после создания заказа.
+                                        {% elif forloop.counter == 2 %}
+                                        Удобный вариант для цифровых кошельков и быстрой повторной оплаты.
+                                        {% else %}
+                                        Оплата при получении заказа после подтверждения менеджером.
+                                        {% endif %}
+                                    </span>
                                 </span>
-                            </span>
-                        </label>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        {% for error in form.payment_method.errors %}
+                        <p class="checkout-field__error" style="margin-top: 12px;">{{ error }}</p>
+                        {% endfor %}
+                    </section>
+
+                    <section class="checkout-card">
+                        <div class="checkout-card__head">
+                            <span class="checkout-card__eyebrow">Шаг 3</span>
+                            <h2 class="checkout-card__title">Подтверждение заказа</h2>
+                            <p class="checkout-card__text">После отправки формы сервер создаст заказ на основе текущей
+                                корзины. Если понадобится, вы сможете вернуться и перепроверить состав.</p>
+                        </div>
+
+                        <div class="checkout-actions">
+                            <a href="{% url 'cart' %}" class="button button--secondary">Назад в корзину</a>
+                            <button type="submit" class="button button--primary">Оформить заказ</button>
+                        </div>
+                    </section>
+                </form>
+
+                <aside class="checkout-summary">
+                    <p class="checkout-summary__eyebrow">Сводка заказа</p>
+                    <h2 class="checkout-summary__title">Ваш заказ</h2>
+
+                    <div class="checkout-summary__items">
+                        {% for item in cart %}
+                        <div class="checkout-item">
+                            <div class="checkout-item__media">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                    class="checkout-item__image">
+                                {% else %}
+                                <div class="checkout-item__placeholder">HB</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="checkout-item__title">{{ item.product.name }}</p>
+                                <div class="checkout-item__meta">{{ item.quantity }} шт. x ${{ item.price|floatformat:2
+                                    }}</div>
+                            </div>
+                            <div class="checkout-item__price">${{ item.total_price|floatformat:2 }}</div>
+                        </div>
                         {% endfor %}
                     </div>
 
-                    {% for error in form.payment_method.errors %}
-                    <p class="checkout-field__error" style="margin-top: 12px;">{{ error }}</p>
-                    {% endfor %}
-                </section>
-
-                <section class="checkout-card">
-                    <div class="checkout-card__head">
-                        <span class="checkout-card__eyebrow">Шаг 3</span>
-                        <h2 class="checkout-card__title">Подтверждение заказа</h2>
-                        <p class="checkout-card__text">После отправки формы сервер создаст заказ на основе текущей корзины. Если понадобится, вы сможете вернуться и перепроверить состав.</p>
+                    <div class="checkout-summary__row">
+                        <span>Единиц товара</span>
+                        <strong>{{ cart|length }}</strong>
                     </div>
-
-                    <div class="checkout-actions">
-                        <a href="{% url 'cart' %}" class="button button--secondary">Назад в корзину</a>
-                        <button type="submit" class="button button--primary">Оформить заказ</button>
+                    <div class="checkout-summary__row">
+                        <span>Доставка</span>
+                        <strong>Рассчитаем позже</strong>
                     </div>
-                </section>
-            </form>
-
-            <aside class="checkout-summary">
-                <p class="checkout-summary__eyebrow">Сводка заказа</p>
-                <h2 class="checkout-summary__title">Ваш заказ</h2>
-
-                <div class="checkout-summary__items">
-                    {% for item in cart %}
-                    <div class="checkout-item">
-                        <div class="checkout-item__media">
-                            {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="checkout-item__image">
-                            {% else %}
-                            <div class="checkout-item__placeholder">HB</div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="checkout-item__title">{{ item.product.name }}</p>
-                            <div class="checkout-item__meta">{{ item.quantity }} шт. x ${{ item.price|floatformat:2 }}</div>
-                        </div>
-                        <div class="checkout-item__price">${{ item.total_price|floatformat:2 }}</div>
+                    <div class="checkout-summary__total">
+                        <span>К оплате</span>
+                        <strong>${{ total|floatformat:2 }}</strong>
                     </div>
-                    {% endfor %}
-                </div>
+                    <p class="checkout-summary__note">Сумма берется из текущей сессии корзины. Если вы измените состав
+                        заказа перед отправкой, итог в этом блоке тоже изменится.</p>
+                </aside>
+            </section>
+            {% else %}
+            <section class="checkout-empty">
+                <span class="checkout-empty__badge">Нет товаров</span>
+                <h2 class="checkout-empty__title">Оформлять пока нечего</h2>
+                <p class="checkout-empty__text">Checkout подготовлен, но если корзина пуста, лучше сначала вернуться в
+                    каталог или собрать заказ в корзине.</p>
+                <a href="{% url 'products:catalog' %}" class="button button--primary checkout-empty__action">Перейти в
+                    каталог</a>
+            </section>
+            {% endif %}
+        </div>
+    </main>
 
-                <div class="checkout-summary__row">
-                    <span>Единиц товара</span>
-                    <strong>{{ cart|length }}</strong>
-                </div>
-                <div class="checkout-summary__row">
-                    <span>Доставка</span>
-                    <strong>Рассчитаем позже</strong>
-                </div>
-                <div class="checkout-summary__total">
-                    <span>К оплате</span>
-                    <strong>${{ total|floatformat:2 }}</strong>
-                </div>
-                <p class="checkout-summary__note">Сумма берется из текущей сессии корзины. Если вы измените состав заказа перед отправкой, итог в этом блоке тоже изменится.</p>
-            </aside>
-        </section>
-        {% else %}
-        <section class="checkout-empty">
-            <span class="checkout-empty__badge">Нет товаров</span>
-            <h2 class="checkout-empty__title">Оформлять пока нечего</h2>
-            <p class="checkout-empty__text">Checkout подготовлен, но если корзина пуста, лучше сначала вернуться в каталог или собрать заказ в корзине.</p>
-            <a href="{% url 'products:catalog' %}" class="button button--primary checkout-empty__action">Перейти в каталог</a>
-        </section>
-        {% endif %}
-    </div>
-</main>
-
-<footer>
-    <img src="{% static 'img/background/image-footer.svg' %}" alt="Hop & Barley Hops Logo" class="footer__hops-logo">
-    <nav class="footer__nav">
-        <ul>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Resources</a></li>
-            <li><a href="#">License</a></li>
-        </ul>
-    </nav>
-    <p class="footer__copyright">© Hop & Barley 2025. All rights reserved</p>
-</footer>
+    <footer>
+        <img src="{% static 'img/background/image-footer.svg' %}" alt="Hop & Barley Hops Logo"
+            class="footer__hops-logo">
+        <nav class="footer__nav">
+            <ul>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Community</a></li>
+                <li><a href="#">Resources</a></li>
+                <li><a href="#">License</a></li>
+            </ul>
+        </nav>
+        <p class="footer__copyright">© Hop & Barley 2025. All rights reserved</p>
+    </footer>
 </body>
+
 </html>

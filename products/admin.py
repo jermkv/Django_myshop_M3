@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Avg
 from .models import Category, Product
 from rangefilter.filters import (
     NumericRangeFilter

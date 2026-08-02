@@ -101,6 +101,17 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'REST API для интернет-магазина Hop & Barley',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SECURITY': [{
+        'BearerAuth': []
+    }],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY_SCHEMES': {
+        'BearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT'
+        }
+    },
     # OTHER SETTINGS
 }
 
@@ -134,6 +145,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+LOGIN_REDIRECT_URL = '/account/'
+LOGOUT_REDIRECT_URL = '/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

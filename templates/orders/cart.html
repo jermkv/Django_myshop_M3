@@ -1,12 +1,10 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корзина | Hop & Barley</title>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <style>
+
+{% block title %}Корзина | Hop & Barley{% endblock %}
+
+{% block extra_head %}
+<style>
         .cart-shell {
             background:
                 radial-gradient(circle at top right, rgba(2, 84, 45, 0.08), transparent 24%),
@@ -431,40 +429,9 @@
             }
         }
     </style>
-</head>
-<body>
-<header>
-    <div class="header-container">
-        <a href="{% url 'products:catalog' %}" class="header__logo">
-            <img src="{% static 'img/logo.svg' %}" alt="Hop & Barley Logo">
-            <p class="logo-text">Hop & Barley</p>
-        </a>
-        <nav class="header__nav">
-            <ul>
-                <li><a href="{% url 'products:catalog' %}">Products</a></li>
-                <li><a href="#">Guides & Recipes</a></li>
-                <li><a href="#">Community</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
+{% endblock %}
 
-        <div class="header__auth-buttons" id="auth-guest">
-            <a href="#" class="button button--secondary">Sign in</a>
-            <a href="#" class="button button--primary">Register</a>
-        </div>
-
-        <div class="header__user-actions" id="auth-user">
-            <a href="#" class="user-icon" aria-label="My Account">
-                <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
-            </a>
-            <a href="{% url 'cart' %}" class="cart-icon" aria-label="Shopping Cart">
-                <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="Shopping Cart">
-            </a>
-        </div>
-    </div>
-</header>
-
+{% block content %}
 {% if messages %}
 <div class="cart-messages">
     {% for message in messages %}
@@ -549,8 +516,7 @@
                     <strong>${{ total|floatformat:2 }}</strong>
                 </div>
                 <a href="{% url 'products:catalog' %}" class="button button--secondary">Продолжить покупки</a>
-                <button type="button" class="button button--primary cart-summary__checkout" disabled>Оформление скоро</button>
-                <p class="cart-summary__note">Шаблон уже использует реальные данные из сессии: количество, товар, изображение и итоговую сумму.</p>
+                <a href="{% url 'checkout' %}" class="button button--primary cart-summary__checkout" style="text-align: center; text-decoration: none; opacity: 1; cursor: pointer;">Оформить заказ</a>
             </aside>
         </section>
         {% else %}
@@ -563,19 +529,4 @@
         {% endif %}
     </div>
 </main>
-
-<footer>
-    <img src="{% static 'img/background/image-footer.svg' %}" alt="Hop & Barley Hops Logo" class="footer__hops-logo">
-    <nav class="footer__nav">
-        <ul>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Resources</a></li>
-            <li><a href="#">License</a></li>
-        </ul>
-    </nav>
-    <p class="footer__copyright">© Hop & Barley 2025. All rights reserved</p>
-</footer>
-</body>
-</html>
+{% endblock %}

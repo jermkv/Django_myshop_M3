@@ -43,3 +43,37 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display = ['order', 'product', 'quantity', 'price']
     list_filter = ['product__category']
     search_fields = ['order__user__username', 'product__name']
+
+
+class OrderAnalytics(Order):
+    class Meta:
+        proxy = True
+        verbose_name = 'Аналитика продаж'
+        verbose_name_plural = 'Аналитика продаж'
+
+@admin.register(OrderAnalytics)
+class OrderAnalyticsAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/order_analytics_change_list.html'
+    date_hierarchy = 'created_at'
+    
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+            
+        metrics = {
+            'total_revenue': qs.aggregate(Sum('total_price'))['total_price__sum'] or 0,
+            'total_orders': qs.count(),
+        }
+        response.context_data['summary'] = metrics
+        
+        # Топ продукты (по количеству проданных)
+        top_products = OrderItem.objects.filter(order__in=qs)\
+            .values('product__name')\
+            .annotate(total_sold=Sum('quantity'))\
+            .order_by('-total_sold')[:5]
+            
+        response.context_data['top_products'] = top_products
+        return response

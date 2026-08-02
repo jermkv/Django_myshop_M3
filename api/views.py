@@ -128,6 +128,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class CartAPIView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
     def get(self, request, product_id=None):
         cart = Cart(request=request)
         data = []

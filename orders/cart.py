@@ -26,15 +26,24 @@ class Cart:
         else:
             self.cart[product_id]['quantity'] += quantity
 
-        #Проверка остатка
+        # Проверка остатка
         max_qty = product.stock
         if self.cart[product_id]['quantity'] > max_qty:
             self.cart[product_id]['quantity'] = max_qty
 
         self.save()
 
-    def remove(self, product) -> None:
-        key = str(product.id)
+    def remove(self, product: Product | None = None, product_id: int | str | None = None) -> None:
+        """
+        Remove product from cart. Accepts either a Product instance or product_id.
+        """
+        if product is not None:
+            key = str(product.id)
+        elif product_id is not None:
+            key = str(product_id)
+        else:
+            return
+
         if key in self.cart:
             del self.cart[key]
             self.save()
@@ -43,8 +52,9 @@ class Cart:
         self.session.modified = True
 
     def clear(self) -> None:
-        del self.session[CART_SESSION_KEY]
-        self.save()
+        if CART_SESSION_KEY in self.session:
+            del self.session[CART_SESSION_KEY]
+            self.save()
 
     def get_total_price(self) -> int:
         return sum(

@@ -1,7 +1,10 @@
 from django.db.models import QuerySet, Avg
 from .models import Product, Category
 from django.views.generic import ListView, DetailView
-from orders.models import OrderItem
+from orders.models import OrderItem, Order
+from reviews.models import Review
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
 
@@ -61,6 +64,38 @@ class ProductDetailView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
+        
+        if not request.user.is_authenticated:
+            messages.error(request, 'Пожалуйста, войдите в систему.')
+            return redirect('products:detail', slug=product.slug)
+            
+        has_purchased = OrderItem.objects.filter(
+            product=product, order__user=request.user, order__status=Order.Status.DELIVERED
+        ).exists()
+        
+        if not has_purchased:
+            messages.error(request, 'Вы можете оставлять отзывы только на купленные товары (статус "Доставлен").')
+            return redirect('products:detail', slug=product.slug)
+            
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        if rating and comment:
+            try:
+                Review.objects.update_or_create(
+                    user=request.user,
+                    product=product,
+                    defaults={'rating': int(rating), 'comment': comment}
+                )
+                messages.success(request, 'Ваш отзыв сохранен.')
+            except ValueError:
+                messages.error(request, 'Некорректное значение рейтинга.')
+        else:
+            messages.error(request, 'Пожалуйста, заполните все поля.')
+            
+        return redirect('products:detail', slug=product.slug)
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True).select_related('category')
 
@@ -75,7 +110,7 @@ class ProductDetailView(DetailView):
         context['average_rating'] = round(avg, 1) if avg else None
 
         if self.request.user.is_authenticated:
-            if OrderItem.objects.filter(product=product, order__user=self.request.user, order__status='completed').exists():
+            if OrderItem.objects.filter(product=product, order__user=self.request.user, order__status=Order.Status.DELIVERED).exists():
                 context['can_review'] = True
             if product.reviews.filter(user=self.request.user).exists():
                 context['user_review'] = product.reviews.get(user=self.request.user)

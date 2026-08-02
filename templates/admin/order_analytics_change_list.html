@@ -1,0 +1,26 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block result_list %}
+<div class="results" style="margin-bottom: 20px; padding: 15px; background: #fff; border: 1px solid #ccc; border-radius: 4px;">
+    <h2>Общая статистика</h2>
+    <div style="display: flex; gap: 20px;">
+        <div>
+            <strong>Выручка:</strong> {{ summary.total_revenue }}
+        </div>
+        <div>
+            <strong>Заказов:</strong> {{ summary.total_orders }}
+        </div>
+    </div>
+    
+    <h3 style="margin-top: 15px;">Топ-5 продуктов</h3>
+    <ul>
+        {% for product in top_products %}
+            <li>{{ product.product__name }} - Продано: {{ product.total_sold }}</li>
+        {% empty %}
+            <li>Нет данных</li>
+        {% endfor %}
+    </ul>
+</div>
+{{ block.super }}
+{% endblock %}

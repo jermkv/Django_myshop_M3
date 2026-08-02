@@ -123,7 +123,7 @@ class CheckoutView(LoginRequiredMixin, View):
 
         cart.clear()
 
-        # self.send_confirmation_email(order)
+        self.send_confirmation_email(order)
         messages.success(request, f'Заказ {order.id} оформлен')
         return redirect('success', order_id=order.id)
 
@@ -135,9 +135,13 @@ class CheckoutView(LoginRequiredMixin, View):
             f"Адрес доставки {order.shipping_address}\n\n"
             f"Мы свяжемся с вами по номеру {order.phone}\n\nHop & Barley"
         )
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [order.user.email])
+        
         #Отправить сообщение администратору
-
+        admin_subject = f'Новый заказ #{order.id}'
+        admin_message = f'Поступил новый заказ #{order.id} от {order.full_name} на сумму {order.total_price}.'
+        if hasattr(settings, 'ADMIN_EMAIL'):
+            send_mail(admin_subject, admin_message, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_EMAIL])
 
 
 
